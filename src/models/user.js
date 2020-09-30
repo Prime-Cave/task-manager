@@ -44,15 +44,13 @@ const userSchema = new mongoose.Schema({
 
 userSchema.statics.findByCredentials = async (email, password) => {
     const user = await User.findOne({ email })
-    
+
     if(!user){
         throw new Error('User not found!')
     }
 
     const isMatch = await bcrypt.compare(password, user.password)
     console.log(isMatch)
-    console.log(password)
-    console.log(user.password)
     if(!isMatch){
         throw new Error('Password is incorrect!')
     }
@@ -65,7 +63,7 @@ userSchema.pre('save', async function (next) {
     const user = this
 
     if(user.isModified('password')){
-        user.password = await bcrypt.hash('user.password', 8)
+        user.password = await bcrypt.hash(user.password, 8)
     }
 
     next()
