@@ -1,7 +1,7 @@
 const express = require('express');
 require('./db/mongoose');
 const userRouter = require('./routers/user')
-const taskRouter = require('./routers/task')
+const taskRouter = require('./routers/task');
 
 const app = express()
 const port=  process.env.PORT || 3000
@@ -10,19 +10,27 @@ app.use(express.json())
 app.use(userRouter)
 app.use(taskRouter)
 
+const multer = require('multer')
+const upload = multer({
+    dest: 'images',
+    limits: {
+        fileSize: 1000000
+    },
+    fileFilter(req, file, cb) {
+        if(!file.originalname.match(/\.(doc|docx)$/)){
+             return cb(new Error('Please upload a PDF File'))
+        }
+        cb(undefined, true)
+        // cd(new Error('Filemust be a pdf'))
+        // cd(undefined, true)
+        // cd(undefined, false)
+    }
+})
+
+app.post('/upload', upload.single('upload'), (req,res) =>{
+    res.send()
+}, (error, req, res, next) => {
+    res.status(400).send({error: error.message})
+})
+
 app.listen(port, () => console.log('Server is up on port: '+ port)) 
-
-// const bcrypt = require('bcryptjs')
-
-// const myFunction = async () =>{
-//     const password ='Red12345!'
-//     const hashedPassword = await bcrypt.hash(password, 8)
-
-//     console.log(password);
-//     console.log(hashedPassword)
-
-//     const ifMatch = await bcrypt.compare(password, hashedPassword)
-//     console.log(ifMatch)
-// }
-
-// myFunction()
